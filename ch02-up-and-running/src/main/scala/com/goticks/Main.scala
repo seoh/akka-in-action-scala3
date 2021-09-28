@@ -11,7 +11,6 @@ import com.typesafe.config.{Config, ConfigFactory}
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor, Future}
 import scala.util.{Failure, Success}
 
-
 object Main extends App with RequestTimeout:
   val config = ConfigFactory.load()
   val host = config.getString("http.host")
@@ -25,16 +24,17 @@ object Main extends App with RequestTimeout:
   val bindingFuture: Future[ServerBinding] =
     Http().newServerAt(host, port).bind(api)
 
-  val log =  Logging(system.eventStream, "go-ticks")
-  bindingFuture.map { serverBinding =>
-    log.info(s"RestApi bound to ${serverBinding.localAddress} ")
-  }.onComplete {
-    case Success(v) =>
-    case Failure(ex) =>
-      log.error(ex, "Failed to bind to {}:{}!", host, port)
-      system.terminate()
-  }
-
+  val log = Logging(system.eventStream, "go-ticks")
+  bindingFuture
+    .map { serverBinding =>
+      log.info(s"RestApi bound to ${serverBinding.localAddress} ")
+    }
+    .onComplete {
+      case Success(v) =>
+      case Failure(ex) =>
+        log.error(ex, "Failed to bind to {}:{}!", host, port)
+        system.terminate()
+    }
 
 trait RequestTimeout:
   import scala.concurrent.duration.*

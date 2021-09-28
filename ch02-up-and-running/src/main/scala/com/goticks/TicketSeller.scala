@@ -12,7 +12,6 @@ object TicketSeller:
   case object GetEvent
   case object Cancel
 
-
 class TicketSeller(event: String) extends Actor:
   import TicketSeller.*
 
@@ -21,11 +20,11 @@ class TicketSeller(event: String) extends Actor:
   def receive: Receive =
     case Add(newTickets) => tickets = tickets ++ newTickets
     case Buy(nOfTickets) =>
-        val entries = tickets.take(nOfTickets).toVector
-        if entries.size >= nOfTickets then
-          sender ! Tickets(event, entries)
-          tickets = tickets.drop(nOfTickets)
-        else sender ! Tickets(event)
+      val entries = tickets.take(nOfTickets).toVector
+      if entries.size >= nOfTickets then
+        sender ! Tickets(event, entries)
+        tickets = tickets.drop(nOfTickets)
+      else sender ! Tickets(event)
 
     case GetEvent => sender ! Some(BoxOffice.Event(event, tickets.size))
     case Cancel =>

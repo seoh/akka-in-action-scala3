@@ -10,21 +10,18 @@ import akka.util.Timeout
 
 import scala.concurrent.ExecutionContext
 
-
-
 class RestApi(system: ActorSystem, timeout: Timeout) extends RestRoutes:
   implicit val requestTimeout = timeout
   implicit def executionContext = system.dispatcher
 
   def createBoxOffice(): ActorRef = system.actorOf(BoxOffice.props, BoxOffice.name)
 
-
 trait RestRoutes extends BoxOfficeApi with EventMarshalling:
   import StatusCodes.*
 
   def routes: Route = eventsRoute ~ eventRoute ~ ticketsRoute
 
-  def eventsRoute =
+  def eventsRoute: Route =
     pathPrefix("events") {
       pathEndOrSingleSlash {
         get {
@@ -72,7 +69,7 @@ trait RestRoutes extends BoxOfficeApi with EventMarshalling:
           // POST /events/:event/tickets
           entity(as[TicketRequest]) { request =>
             onSuccess(requestTickets(event, request.tickets)) { tickets =>
-              if(tickets.entries.isEmpty) complete(NotFound)
+              if tickets.entries.isEmpty then complete(NotFound)
               else complete(Created, tickets)
             }
           }
@@ -80,32 +77,35 @@ trait RestRoutes extends BoxOfficeApi with EventMarshalling:
       }
     }
 
-
 trait BoxOfficeApi:
   import BoxOffice.*
 
-  def createBoxOffice(): ActorRef
+  lazy val boxOffice = createBoxOffice()
 
   implicit def executionContext: ExecutionContext
   implicit def requestTimeout: Timeout
 
-  lazy val boxOffice = createBoxOffice()
+  def createBoxOffice(): ActorRef
 
   def createEvent(event: String, nrOfTickets: Int) =
-    boxOffice.ask(CreateEvent(event, nrOfTickets))
+    boxOffice
+      .ask(CreateEvent(event, nrOfTickets))
       .mapTo[EventResponse]
 
   def getEvents() =
     boxOffice.ask(GetEvents).mapTo[Events]
 
   def getEvent(event: String) =
-    boxOffice.ask(GetEvent(event))
+    boxOffice
+      .ask(GetEvent(event))
       .mapTo[Option[Event]]
 
   def cancelEvent(event: String) =
-    boxOffice.ask(CancelEvent(event))
+    boxOffice
+      .ask(CancelEvent(event))
       .mapTo[Option[Event]]
 
   def requestTickets(event: String, tickets: Int) =
-    boxOffice.ask(GetTickets(event, tickets))
+    boxOffice
+      .ask(GetTickets(event, tickets))
       .mapTo[TicketSeller.Tickets]
