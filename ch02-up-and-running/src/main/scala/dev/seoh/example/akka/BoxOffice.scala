@@ -1,4 +1,4 @@
-package com.goticks
+package dev.seoh.example.akka
 
 import akka.actor.{Actor, ActorRef, Props}
 import akka.util.Timeout

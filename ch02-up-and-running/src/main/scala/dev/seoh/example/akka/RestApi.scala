@@ -1,4 +1,4 @@
-package com.goticks
+package dev.seoh.example.akka
 
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport.*

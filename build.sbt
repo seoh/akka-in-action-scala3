@@ -1,4 +1,3 @@
-
 scalaVersion := "3.0.2"
 
 val Version = new {
@@ -16,10 +15,10 @@ val Akka = Seq(
 ).map(_.cross(CrossVersion.for3Use2_13))
 
 val commons = Seq(
-  organization := "com.goticks",
+  organization := "dev.seoh.example.akka",
   scalaVersion := "3.0.2",
   libraryDependencies := Akka ++ Seq(
-    "ch.qos.logback" % "logback-classic" % "1.2.6",
+    "ch.qos.logback" % "logback-classic" % "1.2.6"
   )
 )
 
