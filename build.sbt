@@ -18,12 +18,13 @@ val commons = Seq(
   organization := "dev.seoh.example.akka",
   scalaVersion := "3.0.2",
   libraryDependencies := Akka ++ Seq(
-    "ch.qos.logback" % "logback-classic" % "1.2.6"
+    "ch.qos.logback" %  "logback-classic" % "1.2.6",
+    "org.scalatest"  %% "scalatest"       % "3.2.9"   % Test
   )
 )
 
 lazy val up          = project.in(file("ch02-up-and-running")).settings(commons: _*)
-// lazy val test        = project.in(file("ch03-testdriven")).settings(commons: _*)
+lazy val test        = project.in(file("ch03-testdriven")).settings(commons: _*)
 // lazy val fault       = project.in(file("ch04-fault-tolerance")).settings(commons: _*)
 // lazy val futures     = project.in(file("ch05-futures")).settings(commons: _*)
 // lazy val remoting    = project.in(file("ch06-remoting")).settings(commons: _*)
